@@ -16,13 +16,17 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='topic-dropdown',
         options=[
-            {'label': 'Binary Tree', 'value': 'binary_tree'},
             {'label': 'Bubble Sort', 'value': 'bubble_sort'},
-            {'label': 'Quick Sort', 'value': 'quick_sort'},
+            {'label': 'Selection Sort', 'value': 'selection_sort'},
             {'label': 'Insertion Sort', 'value': 'insertion_sort'},
-            {'label': 'Binary Sort', 'value': 'binary_sort'}
+            {'label': 'Shell Sort', 'value': 'shell_sort'},
+            {'label': 'Radix Sort', 'value': 'radix_sort'},
+            {'label': 'Merge Sort', 'value': 'merge_sort'},
+            {'label': 'Quick Sort', 'value': 'quick_sort'},
+            {'label': 'DFS Algorithm', 'value': 'dfs'},
+            {'label': 'BFS Algorithm', 'value': 'bfs'}
         ],
-        value='array'  # Default value
+        value='bubble_sort'  # Default value
     ),
 
     # Div to display content based on the selected topic
@@ -59,8 +63,9 @@ def display_content(selected_topic):
             html.H2('Bubble Sort'),
             html.P('Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.'),
             html.Ul([
-                html.Li('Simple to understand and implement'),
-                html.Li('Inefficient for large lists')
+                html.Li('1. Scan the array left to right'),
+                html.Li('2. Compare each adjacent elements'),
+                html.Li('3. Swap them if they are out of order')
             ]),
             html.H3('Python Code Example:'),
             format_code(code_example)
@@ -80,7 +85,7 @@ def display_content(selected_topic):
             return i+1
 
         def quick_sort(arr, low, high):
-            if low < high:
+            if low < high):
                 pi = partition(arr, low, high)
                 quick_sort(arr, low, pi-1)
                 quick_sort(arr, pi+1, high)
@@ -128,43 +133,228 @@ def display_content(selected_topic):
             html.H3('Python Code Example:'),
             format_code(code_example)
         ])
-    elif selected_topic == 'binary_sort':
+    elif selected_topic == 'selection_sort':
         code_example = """
-        # Binary Insertion Sort implementation in Python
-        def binary_search(arr, val, start, end):
-            if start == end:
-                if arr[start] > val:
-                    return start
-                else:
-                    return start + 1
-            if start > end:
-                return start
-
-            mid = (start + end) // 2
-            if arr[mid] < val:
-                return binary_search(arr, val, mid + 1, end)
-            elif arr[mid] > val:
-                return binary_search(arr, val, start, mid - 1)
-            else:
-                return mid
-
-        def binary_insertion_sort(arr):
-            for i in range(1, len(arr)):
-                val = arr[i]
-                j = binary_search(arr, val, 0, i - 1)
-                arr = arr[:j] + [val] + arr[j:i] + arr[i + 1:]
-            return arr
+        # Selection Sort implementation in Python
+        def selection_sort(arr):
+            for i in range(len(arr)):
+                min_idx = i
+                for j in range(i+1, len(arr)):
+                    if arr[j] < arr[min_idx]:
+                        min_idx = j
+                arr[i], arr[min_idx] = arr[min_idx], arr[i]
 
         # Example usage
-        arr = [37, 23, 0, 17, 12, 72, 31, 46, 100, 88, 54]
-        sorted_arr = binary_insertion_sort(arr)
-        print("Sorted array is:", sorted_arr)  # Output: [0, 12, 17, 23, 31, 37, 46, 54, 72, 88, 100]
+        arr = [64, 25, 12, 22, 11]
+        selection_sort(arr)
+        print("Sorted array is:", arr)  # Output: [11, 12, 22, 25, 64]
         """
         return html.Div([
-            html.H2('Binary Insertion Sort'),
-            html.P('Binary Insertion Sort uses binary search to find the correct location to insert the selected item at each iteration.'),
+            html.H2('Selection Sort'),
+            html.P('Selection Sort is a simple sorting algorithm that divides the array into a sorted and an unsorted region and repeatedly selects the smallest element from the unsorted region.'),
             html.Ul([
-                html.Li('More efficient than simple insertion sort for large arrays')
+                html.Li('1. Find the minimum element in the unsorted array'),
+                html.Li('2. Swap it with the first unsorted element'),
+                html.Li('3. Move the boundary of the sorted region one step to the right')
+            ]),
+            html.H3('Python Code Example:'),
+            format_code(code_example)
+        ])
+    elif selected_topic == 'shell_sort':
+        code_example = """
+        # Shell Sort implementation in Python
+        def shell_sort(arr):
+            n = len(arr)
+            gap = n // 2
+            while gap > 0:
+                for i in range(gap, n):
+                    temp = arr[i]
+                    j = i
+                    while j >= gap and arr[j - gap] > temp:
+                        arr[j] = arr[j - gap]
+                        j -= gap
+                    arr[j] = temp
+                gap //= 2
+
+        # Example usage
+        arr = [12, 34, 54, 2, 3]
+        shell_sort(arr)
+        print("Sorted array is:", arr)  # Output: [2, 3, 12, 34, 54]
+        """
+        return html.Div([
+            html.H2('Shell Sort'),
+            html.P('Shell Sort is an in-place comparison-based sorting algorithm. It is a generalization of insertion sort that allows the exchange of items that are far apart.'),
+            html.Ul([
+                html.Li('Uses a gap sequence to determine the elements to compare'),
+                html.Li('Reduces the gap and sorts subarrays until the entire array is sorted')
+            ]),
+            html.H3('Python Code Example:'),
+            format_code(code_example)
+        ])
+    elif selected_topic == 'radix_sort':
+        code_example = """
+        # Radix Sort implementation in Python
+        def counting_sort(arr, exp1):
+            n = len(arr)
+            output = [0] * n 
+            count = [0] * 10
+
+            for i in range(0, n):
+                index = arr[i] // exp1
+                count[index % 10] += 1
+
+            for i in range(1, 10):
+                count[i] += count[i - 1]
+
+            i = n - 1
+            while i >= 0:
+                index = arr[i] // exp1
+                output[count[index % 10] - 1] = arr[i]
+                count[index % 10] -= 1
+                i -= 1
+
+            for i in range(0, len(arr)):
+                arr[i] = output[i]
+
+        def radix_sort(arr):
+            max1 = max(arr)
+            exp = 1
+            while max1 // exp > 0:
+                counting_sort(arr, exp)
+                exp *= 10
+
+        # Example usage
+        arr = [170, 45, 75, 90, 802, 24, 2, 66]
+        radix_sort(arr)
+        print("Sorted array is:", arr)  # Output: [2, 24, 45, 66, 75, 90, 170, 802]
+        """
+        return html.Div([
+            html.H2('Radix Sort'),
+            html.P('Radix Sort is a non-comparative sorting algorithm. It sorts numbers by processing individual digits.'),
+            html.Ul([
+                html.Li('Sorts based on the least significant digit to the most significant digit'),
+                html.Li('Uses counting sort as a subroutine')
+            ]),
+            html.H3('Python Code Example:'),
+            format_code(code_example)
+        ])
+    elif selected_topic == 'merge_sort':
+        code_example = """
+        # Merge Sort implementation in Python
+        def merge_sort(arr):
+            if len(arr) > 1:
+                mid = len(arr) // 2
+                L = arr[:mid]
+                R = arr[mid:]
+
+                merge_sort(L)
+                merge_sort(R)
+
+                i = j = k = 0
+                while i < len(L) and j < len(R):
+                    if L[i] < R[j]:
+                        arr[k] = L[i]
+                        i += 1
+                    else:
+                        arr[k] = R[j]
+                        j += 1
+                    k += 1
+
+                while i < len(L):
+                    arr[k] = L[i]
+                    i += 1
+                    k += 1
+
+                while j < len(R):
+                    arr[k] = R[j]
+                    j += 1
+                    k += 1
+
+        # Example usage
+        arr = [12, 11, 13, 5, 6, 7]
+        merge_sort(arr)
+        print("Sorted array is:", arr)  # Output: [5, 6, 7, 11, 12, 13]
+        """
+        return html.Div([
+            html.H2('Merge Sort'),
+            html.P('Merge Sort is a divide-and-conquer algorithm that splits the array into halves, recursively sorts them, and then merges the sorted halves.'),
+            html.Ul([
+                html.Li('Stable sort'),
+                html.Li('Divides the array into halves and merges them after sorting each half')
+            ]),
+            html.H3('Python Code Example:'),
+            format_code(code_example)
+        ])
+    elif selected_topic == 'dfs':
+        code_example = """
+        # DFS Algorithm implementation in Python
+        def dfs(graph, start, visited=None):
+            if visited is None:
+                visited = set()
+            visited.add(start)
+            print(start, end=' ')
+
+            for next in graph[start] - visited:
+                dfs(graph, next, visited)
+            return visited
+
+        # Example usage
+        graph = {
+            'A': {'B', 'C'},
+            'B': {'A', 'D', 'E'},
+            'C': {'A', 'F'},
+            'D': {'B'},
+            'E': {'B', 'F'},
+            'F': {'C', 'E'}
+        }
+        dfs(graph, 'A')  # Output: A B D E F C
+        """
+        return html.Div([
+            html.H2('Depth-First Search (DFS)'),
+            html.P('DFS is an algorithm for traversing or searching tree or graph data structures. The algorithm starts at the root node and explores as far as possible along each branch before backtracking.'),
+            html.Ul([
+                html.Li('Uses a stack to keep track of nodes to be visited'),
+                html.Li('Can be implemented recursively or iteratively')
+            ]),
+            html.H3('Python Code Example:'),
+            format_code(code_example)
+        ])
+    elif selected_topic == 'bfs':
+        code_example = """
+        # BFS Algorithm implementation in Python
+        from collections import deque
+
+        def bfs(graph, start):
+            visited = set()
+            queue = deque([start])
+            visited.add(start)
+
+            while queue:
+                vertex = queue.popleft()
+                print(vertex, end=' ')
+
+                for neighbor in graph[vertex]:
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        queue.append(neighbor)
+
+        # Example usage
+        graph = {
+            'A': {'B', 'C'},
+            'B': {'A', 'D', 'E'},
+            'C': {'A', 'F'},
+            'D': {'B'},
+            'E': {'B', 'F'},
+            'F': {'C', 'E'}
+        }
+        bfs(graph, 'A')  # Output: A B C D E F
+        """
+        return html.Div([
+            html.H2('Breadth-First Search (BFS)'),
+            html.P('BFS is an algorithm for traversing or searching tree or graph data structures. It starts at the tree root and explores all nodes at the present depth level before moving on to nodes at the next depth level.'),
+            html.Ul([
+                html.Li('Uses a queue to keep track of nodes to be visited'),
+                html.Li('Explores nodes level by level')
             ]),
             html.H3('Python Code Example:'),
             format_code(code_example)
@@ -240,33 +430,162 @@ def run_algorithm(n_clicks, selected_topic, input_data):
         sorted_data = insertion_sort(data)
         return f'Sorted array: {sorted_data}'
 
-    elif selected_topic == 'binary_sort':
-        def binary_search(arr, val, start, end):
-            if start == end:
-                if arr[start] > val:
-                    return start
-                else:
-                    return start + 1
-            if start > end:
-                return start
-
-            mid = (start + end) // 2
-            if arr[mid] < val:
-                return binary_search(arr, val, mid + 1, end)
-            elif arr[mid] > val:
-                return binary_search(arr, val, start, mid - 1)
-            else:
-                return mid
-
-        def binary_insertion_sort(arr):
-            for i in range(1, len(arr)):
-                val = arr[i]
-                j = binary_search(arr, val, 0, i - 1)
-                arr = arr[:j] + [val] + arr[j:i] + arr[i + 1:]
+    elif selected_topic == 'selection_sort':
+        def selection_sort(arr):
+            for i in range(len(arr)):
+                min_idx = i
+                for j in range(i+1, len(arr)):
+                    if arr[j] < arr[min_idx]:
+                        min_idx = j
+                arr[i], arr[min_idx] = arr[min_idx], arr[i]
             return arr
 
-        sorted_data = binary_insertion_sort(data)
+        sorted_data = selection_sort(data)
         return f'Sorted array: {sorted_data}'
+
+    elif selected_topic == 'shell_sort':
+        def shell_sort(arr):
+            n = len(arr)
+            gap = n // 2
+            while gap > 0:
+                for i in range(gap, n):
+                    temp = arr[i]
+                    j = i
+                    while j >= gap and arr[j - gap] > temp:
+                        arr[j] = arr[j - gap]
+                        j -= gap
+                    arr[j] = temp
+                gap //= 2
+            return arr
+
+        sorted_data = shell_sort(data)
+        return f'Sorted array: {sorted_data}'
+
+    elif selected_topic == 'radix_sort':
+        def counting_sort(arr, exp1):
+            n = len(arr)
+            output = [0] * n 
+            count = [0] * 10
+
+            for i in range(0, n):
+                index = arr[i] // exp1
+                count[index % 10] += 1
+
+            for i in range(1, 10):
+                count[i] += count[i - 1]
+
+            i = n - 1
+            while i >= 0:
+                index = arr[i] // exp1
+                output[count[index % 10] - 1] = arr[i]
+                count[index % 10] -= 1
+                i -= 1
+
+            for i in range(0, len(arr)):
+                arr[i] = output[i]
+
+        def radix_sort(arr):
+            max1 = max(arr)
+            exp = 1
+            while max1 // exp > 0:
+                counting_sort(arr, exp)
+                exp *= 10
+
+        sorted_data = radix_sort(data)
+        return f'Sorted array: {sorted_data}'
+
+    elif selected_topic == 'merge_sort':
+        def merge_sort(arr):
+            if len(arr) > 1:
+                mid = len(arr) // 2
+                L = arr[:mid]
+                R = arr[mid:]
+
+                merge_sort(L)
+                merge_sort(R)
+
+                i = j = k = 0
+                while i < len(L) and j < len(R):
+                    if L[i] < R[j]:
+                        arr[k] = L[i]
+                        i += 1
+                    else:
+                        arr[k] = R[j]
+                        j += 1
+                    k += 1
+
+                while i < len(L):
+                    arr[k] = L[i]
+                    i += 1
+                    k += 1
+
+                while j < len(R):
+                    arr[k] = R[j]
+                    j += 1
+                    k += 1
+            return arr
+
+        sorted_data = merge_sort(data)
+        return f'Sorted array: {sorted_data}'
+
+    elif selected_topic == 'dfs':
+        graph = {
+            'A': {'B', 'C'},
+            'B': {'A', 'D', 'E'},
+            'C': {'A', 'F'},
+            'D': {'B'},
+            'E': {'B', 'F'},
+            'F': {'C', 'E'}
+        }
+        
+        def dfs(graph, start, visited=None):
+            if visited is None:
+                visited = set()
+            visited.add(start)
+            result = [start]
+
+            for next in graph[start] - visited:
+                result.extend(dfs(graph, next, visited))
+            return result
+        
+        try:
+            sorted_data = dfs(graph, data[0])
+            return f'Visited nodes in order: {sorted_data}'
+        except KeyError:
+            return 'Invalid starting node for DFS. Please enter a valid node.'
+
+    elif selected_topic == 'bfs':
+        from collections import deque
+        graph = {
+            'A': {'B', 'C'},
+            'B': {'A', 'D', 'E'},
+            'C': {'A', 'F'},
+            'D': {'B'},
+            'E': {'B', 'F'},
+            'F': {'C', 'E'}
+        }
+
+        def bfs(graph, start):
+            visited = set()
+            queue = deque([start])
+            visited.add(start)
+            result = []
+
+            while queue:
+                vertex = queue.popleft()
+                result.append(vertex)
+
+                for neighbor in graph[vertex]:
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        queue.append(neighbor)
+            return result
+        
+        try:
+            sorted_data = bfs(graph, data[0])
+            return f'Visited nodes in order: {sorted_data}'
+        except KeyError:
+            return 'Invalid starting node for BFS. Please enter a valid node.'
 
     return 'Algorithm run successfully.'
 
