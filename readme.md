@@ -1,0 +1,1 @@
+![Example Image](example.png)
