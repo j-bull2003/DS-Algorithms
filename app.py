@@ -2,7 +2,12 @@ from dash import Dash, html, dcc, Input, Output, State
 import textwrap
 
 # Initialize the Dash app
+
+from flask import Flask
+
 app = Dash(__name__)
+
+@app.route('/')
 
 # Function to wrap code in HTML format
 def format_code(code):
@@ -589,6 +594,8 @@ def run_algorithm(n_clicks, selected_topic, input_data):
 
     return 'Algorithm run successfully.'
 
-# Run the app
-if __name__ == '__main__':
-    app.run(debug=True)
+
+if __name__ == "__main__":
+    app.run()
+    app = Dash(__name__)
+
