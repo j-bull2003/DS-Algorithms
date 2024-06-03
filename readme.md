@@ -18,3 +18,21 @@ You can also see algorithm examples for traversing through tree structures, and 
 
 
 ![Example Image](example.png)
+
+## To run the project locally:
+
+--------------------------------
+1. clone the repo
+2. cd into the repo:
+
+```
+cd DSA
+```
+3. install dependencies
+```
+pip install -r requirements.txt
+```
+4. Run the project on localhost
+```
+python app.py
+```
